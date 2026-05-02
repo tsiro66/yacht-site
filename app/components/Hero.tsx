@@ -11,6 +11,8 @@ export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const bgRef = useRef<HTMLDivElement>(null);
   const titleWrapRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const descRef = useRef<HTMLParagraphElement>(null);
   const subtitleRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
@@ -23,6 +25,35 @@ export default function Hero() {
       lenis.raf(time * 1000);
     });
     gsap.ticker.lagSmoothing(0);
+
+    // --- Entrance animations (after preloader) ---
+    const entranceTl = gsap.timeline({ paused: true });
+
+    // Set initial hidden states
+    gsap.set(bgRef.current, { scale: 1.15, opacity: 0 });
+    gsap.set(titleRef.current, { opacity: 0, y: 40 });
+    gsap.set(descRef.current, { opacity: 0, y: 30 });
+
+    entranceTl
+      .to(bgRef.current, {
+        scale: 1,
+        opacity: 1,
+        duration: 1.4,
+        ease: "power2.out",
+      })
+      .to(
+        titleRef.current,
+        { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" },
+        "-=0.8"
+      )
+      .to(
+        descRef.current,
+        { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" },
+        "-=0.4"
+      );
+
+    const onPreloaderDone = () => entranceTl.play();
+    window.addEventListener("preloader:done", onPreloaderDone);
 
     // Scroll-driven blur + text swap
     const ctx = gsap.context(() => {
@@ -72,6 +103,8 @@ export default function Hero() {
     }, sectionRef);
 
     return () => {
+      window.removeEventListener("preloader:done", onPreloaderDone);
+      entranceTl.kill();
       ctx.revert();
       lenis.destroy();
     };
@@ -94,12 +127,12 @@ export default function Hero() {
         {/* Centered titles */}
         <div className="relative z-10 flex h-full items-center justify-center px-6">
           <div ref={titleWrapRef} className="absolute flex flex-col items-center gap-6">
-            <h1 className="font-serif max-w-4xl text-center text-5xl font-semibold leading-[1.1] tracking-tight text-white md:text-7xl lg:text-8xl">
+            <h1 ref={titleRef} className="font-serif max-w-4xl text-center text-5xl font-semibold leading-[1.1] tracking-tight text-white md:text-7xl lg:text-8xl">
               Adventure For The
               <br />
               Restless Soul
             </h1>
-            <p className="max-w-lg text-center text-base font-light leading-relaxed text-white/80 md:text-lg">
+            <p ref={descRef} className="max-w-lg text-center text-base font-light leading-relaxed text-white/80 md:text-lg">
               Set sail aboard a private luxury expedition yacht to the furthest
               reaches of Greece
             </p>

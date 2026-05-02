@@ -38,27 +38,45 @@ export default function Navbar() {
     const nav = navRef.current;
     if (!nav) return;
 
-    // Show/hide on scroll direction
-    const showAnim = gsap
-      .from(nav, {
-        yPercent: -100,
-        paused: true,
-        duration: 0.3,
-        ease: "power2.out",
-      })
-      .progress(1);
+    // Hide navbar until preloader done
+    gsap.set(nav, { yPercent: -100 });
 
-    const directionTrigger = ScrollTrigger.create({
-      start: "top top",
-      end: "max",
-      onUpdate: (self) => {
-        if (self.direction === -1) {
-          showAnim.play();
-        } else {
-          showAnim.reverse();
-        }
-      },
-    });
+    let showAnim: gsap.core.Tween | null = null;
+    let directionTrigger: ScrollTrigger | null = null;
+
+    const onPreloaderDone = () => {
+      // Slide navbar in
+      gsap.to(nav, {
+        yPercent: 0,
+        duration: 0.8,
+        ease: "power3.out",
+        delay: 0.3,
+        onComplete: () => {
+          // Only setup scroll-direction hide AFTER entrance done
+          showAnim = gsap
+            .from(nav, {
+              yPercent: -100,
+              paused: true,
+              duration: 0.3,
+              ease: "power2.out",
+            })
+            .progress(1);
+
+          directionTrigger = ScrollTrigger.create({
+            start: "top top",
+            end: "max",
+            onUpdate: (self) => {
+              if (self.direction === -1) {
+                showAnim!.play();
+              } else {
+                showAnim!.reverse();
+              }
+            },
+          });
+        },
+      });
+    };
+    window.addEventListener("preloader:done", onPreloaderDone);
 
     // Theme switching for dark-bg sections
     const applyTheme = (theme: "light" | "dark") => {
@@ -92,8 +110,9 @@ export default function Navbar() {
     });
 
     return () => {
-      directionTrigger.kill();
-      showAnim.kill();
+      window.removeEventListener("preloader:done", onPreloaderDone);
+      directionTrigger?.kill();
+      showAnim?.kill();
       themeTriggers.forEach((t) => t.kill());
     };
   }, []);
@@ -131,9 +150,14 @@ export default function Navbar() {
         {/* Book button */}
         <Link
           href="/book"
-          className="nav-btn rounded bg-white px-6 py-1 text-lg font-semibold uppercase tracking-wider text-black/50"
+          className="nav-btn group relative block h-7 overflow-hidden rounded bg-white px-6 text-lg font-semibold uppercase tracking-wider text-black/50"
         >
-          Book
+          <span className="block h-7 leading-7 transition-transform duration-300 ease-out group-hover:-translate-y-full">
+            Book
+          </span>
+          <span className="block h-7 leading-7 transition-transform duration-300 ease-out group-hover:-translate-y-full">
+            Book
+          </span>
         </Link>
       </div>
     </nav>
