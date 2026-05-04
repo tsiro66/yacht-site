@@ -9,6 +9,7 @@ export default function Preloader() {
   const charsRef = useRef<(HTMLSpanElement | null)[]>([]);
   const oSpanRef = useRef<HTMLSpanElement>(null);
   const ellipseRef = useRef<SVGEllipseElement>(null);
+  const tlRef = useRef<gsap.core.Timeline | null>(null); // Option 3: Ref for timeline
   const maskId = useId();
 
   const brandChars = "99 knots".split("");
@@ -19,13 +20,12 @@ export default function Preloader() {
     const chars = charsRef.current.filter(Boolean) as HTMLSpanElement[];
     const oSpan = oSpanRef.current;
     const ellipse = ellipseRef.current;
+    
     if (!outer || !textGroup || !chars.length || !oSpan || !ellipse) return;
 
     document.body.style.overflow = "hidden";
 
-    let tl: gsap.core.Timeline | null = null;
-
-    // 1. Preload hero image
+    // 1. Preload hero video
     const video = document.createElement("video");
     video.src = "/hero.mp4";
     video.preload = "auto";
@@ -34,14 +34,14 @@ export default function Preloader() {
       video.oncanplaythrough = resolve;
     });
 
-    // 2. Explicitly load your custom font
-    // Replace "Hero Font Name" with the exact name of the font-family in your CSS
+    // 2. Load custom font
     const fontReady = document.fonts.load("1em --font-hero").catch(() => {});
 
+    // 3. Safety timeout
     const timeout = new Promise((resolve) => setTimeout(resolve, 3000));
 
-    // 3. Wait for BOTH the image and the specific font (or timeout)
     Promise.race([Promise.all([fontReady, videoReady]), timeout]).then(() => {
+      // Check if the component is still mounted
       if (!outer.isConnected) return;
 
       const oRect = oSpan.getBoundingClientRect();
@@ -64,7 +64,8 @@ export default function Preloader() {
         transformOrigin: `${oCx}px ${oCy}px`,
       });
 
-      tl = gsap.timeline({
+      // Assign the timeline to the Ref
+      tlRef.current = gsap.timeline({
         onComplete: () => {
           document.body.style.overflow = "";
           outer.style.display = "none";
@@ -72,11 +73,10 @@ export default function Preloader() {
         },
       });
 
+      const tl = tlRef.current;
+
       chars.forEach((char, i) => {
         const fromAbove = i % 2 === 0;
-
-        // We no longer need to set opacity: 0 here because it's in the CSS.
-        // Just set the starting Y position.
         gsap.set(char, { y: fromAbove ? -40 : 40 });
 
         tl.to(
@@ -120,7 +120,8 @@ export default function Preloader() {
     });
 
     return () => {
-      tl?.kill();
+      // Use optional chaining on the ref to safely kill the animation
+      tlRef.current?.kill();
       document.body.style.overflow = "";
     };
   }, []);
@@ -173,7 +174,6 @@ export default function Preloader() {
                 charsRef.current[i] = el;
                 if (char === "o" && i === 5) oSpanRef.current = el;
               }}
-              // CRITICAL ADDITION: opacity-0 added here so the DOM paints it invisible first
               className="inline-block opacity-0"
               style={char === " " ? { width: "0.3em" } : undefined}
             >
