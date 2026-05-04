@@ -9,7 +9,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
-  const bgRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null); // Changed to Video element
   const titleWrapRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
@@ -18,9 +18,7 @@ export default function Hero() {
   useEffect(() => {
     // Lenis smooth scroll
     const lenis = new Lenis();
-
     lenis.on("scroll", ScrollTrigger.update);
-
     gsap.ticker.add((time) => {
       lenis.raf(time * 1000);
     });
@@ -29,23 +27,16 @@ export default function Hero() {
     // --- Entrance animations (after preloader) ---
     const entranceTl = gsap.timeline({ paused: true });
 
-    // Set initial hidden states
-    gsap.set(bgRef.current, { scale: 1.15, opacity: 0 });
     gsap.set(titleRef.current, { opacity: 0, y: 40 });
     gsap.set(descRef.current, { opacity: 0, y: 30 });
 
     entranceTl
-      .to(bgRef.current, {
-        scale: 1,
+      .to(titleRef.current, {
         opacity: 1,
-        duration: 1.4,
-        ease: "power2.out",
+        y: 0,
+        duration: 0.9,
+        ease: "power3.out",
       })
-      .to(
-        titleRef.current,
-        { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" },
-        "-=0.8"
-      )
       .to(
         descRef.current,
         { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" },
@@ -66,18 +57,17 @@ export default function Hero() {
         },
       });
 
-      // Blur bg image
+      // Blur the video instead of the div
       tl.to(
-        bgRef.current,
+        videoRef.current,
         {
           filter: "blur(20px)",
-          scale: 1.05,
+          scale: 1.1, // Slightly higher scale to prevent edges showing during blur
           ease: "none",
         },
         0
       );
 
-      // Scale down + fade out title (shrinks in) — quick
       tl.to(
         titleWrapRef.current,
         {
@@ -89,7 +79,6 @@ export default function Hero() {
         0
       );
 
-      // Fade in second title — starts right after, holds for rest of scroll
       tl.fromTo(
         subtitleRef.current,
         { opacity: 0 },
@@ -112,22 +101,30 @@ export default function Hero() {
 
   return (
     <section ref={sectionRef} className="relative h-[500vh]">
-      {/* Sticky container */}
       <div className="fixed top-0 left-0 z-0 h-screen w-full overflow-hidden">
-        {/* Background image */}
-        <div
-          ref={bgRef}
-          className="absolute -inset-10 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url(/hero.jpg)" }}
-        />
+        
+        {/* Video Background */}
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 h-full w-full object-cover"
+          // Using -inset-10 to allow for the scale/blur effect without white edges
+          style={{ transform: 'scale(1.02)' }} 
+        >
+          <source src="/hero.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
 
         {/* Dark overlay */}
-        <div className="absolute inset-0 bg-black/30" />
+        <div className="absolute inset-0 bg-black/40" />
 
         {/* Centered titles */}
         <div className="relative z-10 flex h-full items-center justify-center px-6">
           <div ref={titleWrapRef} className="absolute flex flex-col items-center gap-6">
-            <h1 ref={titleRef} className="font-serif max-w-4xl text-center text-5xl font-semibold leading-[1.1] tracking-tight text-white md:text-7xl lg:text-8xl">
+            <h1 ref={titleRef} className="font-hero max-w-4xl text-center text-5xl font-semibold leading-[1.1] tracking-tight text-white md:text-7xl lg:text-8xl">
               Adventure For The
               <br />
               Restless Soul
@@ -139,7 +136,7 @@ export default function Hero() {
           </div>
           <h2
             ref={subtitleRef}
-            className="font-serif absolute max-w-4xl text-center text-3xl font-semibold text-white opacity-0 md:text-5xl lg:text-6xl"
+            className="font-hero absolute max-w-4xl px-4 text-center text-3xl font-semibold text-white opacity-0 md:text-5xl lg:text-6xl"
           >
             where luxury meets the untamed beauty of the open sea.
           </h2>

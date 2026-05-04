@@ -4,7 +4,7 @@
 @theme inline {
   --font-sans: var(--font-poppins);
   --font-serif: var(--font-playfair);
-  --font-logo: var(--font-google-sans);
+  --font-hero: var(--font-google-sans);
 }
 
 html {

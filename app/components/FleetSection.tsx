@@ -32,8 +32,11 @@ export default function FleetSection() {
     if (!sectionRef.current) return;
     const sectionTop = sectionRef.current.offsetTop;
     const scrollable = sectionRef.current.offsetHeight - window.innerHeight;
-    const progress = (i + 0.5) / yachts.length;
-    window.scrollTo({ top: sectionTop + scrollable * progress, behavior: "smooth" });
+    const progress = i / yachts.length + 0.001;
+    window.scrollTo({
+      top: sectionTop + scrollable * progress,
+      behavior: "smooth",
+    });
   };
 
   useEffect(() => {
@@ -58,50 +61,55 @@ export default function FleetSection() {
         start: "top top",
         end: "bottom bottom",
         onUpdate: (self) => {
-          const rawProgress = self.progress * yachts.length;
-          const idx = Math.min(yachts.length - 1, Math.floor(rawProgress));
-          // fractional progress within current yacht's zone (0→1)
-          const frac = rawProgress - idx;
+          // Use (length - 1) to ensure we reach the final index at 100% scroll
+          const rawProgress = self.progress * (yachts.length - 1);
+          const floorIdx = Math.floor(rawProgress);
+          const frac = rawProgress - floorIdx;
 
-          // --- Continuous list position interpolation ---
+          // 1. LIST POSITIONING & IMAGE CROSSFADE
+          // Use floorIdx and the next index to interpolate position smoothly
           if (listRef.current && listWrapRef.current) {
             const wrapH = listWrapRef.current.offsetHeight;
-            const currName = nameRefs.current[idx];
-            const nextName = nameRefs.current[Math.min(idx + 1, yachts.length - 1)];
+            const currName = nameRefs.current[floorIdx];
+            const nextName =
+              nameRefs.current[Math.min(floorIdx + 1, yachts.length - 1)];
+
             if (currName && nextName) {
-              const currY = wrapH / 2 - currName.offsetTop - currName.offsetHeight / 2;
-              const nextY = wrapH / 2 - nextName.offsetTop - nextName.offsetHeight / 2;
-              // Smoothly interpolate between positions
+              const currY =
+                wrapH / 2 - currName.offsetTop - currName.offsetHeight / 2;
+              const nextY =
+                wrapH / 2 - nextName.offsetTop - nextName.offsetHeight / 2;
+
+              // Smoothly interpolate between positions based on exact scroll
               const targetY = currY + (nextY - currY) * frac;
               gsap.set(listRef.current, { y: targetY });
             }
           }
 
-          // --- Image crossfade tied to scroll progress ---
+          // Image crossfade tied exactly to the scroll
           imageRefs.current.forEach((img, i) => {
             if (!img) return;
             let opacity = 0;
-            if (i === idx) {
-              // Current yacht: fade out as we approach next
-              opacity = i === yachts.length - 1 ? 1 : 1 - Math.pow(frac, 2);
-            } else if (i === idx + 1) {
-              // Next yacht: fade in
-              opacity = Math.pow(frac, 2);
+            if (i === floorIdx) {
+              opacity = 1 - frac;
+            } else if (i === floorIdx + 1) {
+              opacity = frac;
             }
             gsap.set(img, { opacity });
           });
 
-          // --- Name color transitions ---
-          if (idx !== activeRef.current) {
-            // Crossed into new yacht zone — animate color change
+          // 2. ACTIVE TEXT HIGHLIGHTING
+          // Use Math.round here so the color highlights as soon as the image is > 50% visible
+          const highlightIdx = Math.round(rawProgress);
+
+          if (highlightIdx !== activeRef.current) {
             const prevName = nameRefs.current[activeRef.current];
-            const newName = nameRefs.current[idx];
+            const newName = nameRefs.current[highlightIdx];
 
             if (prevName) {
               gsap.to(prevName, {
                 color: INACTIVE_COLOR,
                 duration: 0.3,
-                ease: "power2.out",
                 overwrite: "auto",
               });
             }
@@ -109,12 +117,11 @@ export default function FleetSection() {
               gsap.to(newName, {
                 color: ACTIVE_COLOR,
                 duration: 0.3,
-                ease: "power2.out",
                 overwrite: "auto",
               });
             }
 
-            activeRef.current = idx;
+            activeRef.current = highlightIdx;
           }
         },
       });
@@ -150,8 +157,14 @@ export default function FleetSection() {
           </div>
 
           {/* Yacht names — vertically centered, list slides */}
-          <div ref={listWrapRef} className="relative h-screen overflow-hidden lg:w-[52%]">
-            <div ref={listRef} className="absolute left-0 flex w-full flex-col gap-1">
+          <div
+            ref={listWrapRef}
+            className="relative h-screen overflow-hidden lg:w-[52%]"
+          >
+            <div
+              ref={listRef}
+              className="absolute left-0 flex w-full flex-col gap-1"
+            >
               {yachts.map((yacht, i) => (
                 <span
                   key={yacht.name}

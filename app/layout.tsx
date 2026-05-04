@@ -7,18 +7,21 @@ const poppins = Poppins({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-poppins",
+  display: "block",
 });
 
 const googleSans = localFont({
   src: "./fonts/GoogleSans-Medium.ttf",
   variable: "--font-google-sans",
   weight: "500",
+  display: "block",
 });
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-playfair",
+  display: "block",
 });
 
 export const metadata: Metadata = {
@@ -32,8 +35,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${poppins.variable} ${playfair.variable} ${googleSans.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col font-sans">{children}</body>
+    <html
+      lang="en"
+      className={`${poppins.variable} ${playfair.variable} ${googleSans.variable} h-full antialiased`}
+    >
+      <body className="min-h-full flex flex-col font-hero">{children}</body>
     </html>
   );
 }
