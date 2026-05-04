@@ -150,7 +150,7 @@ export default function Navbar() {
         {/* Book button */}
         <Link
           href="/book"
-          className="nav-btn group relative block h-7 overflow-hidden rounded bg-white px-6 text-lg font-semibold uppercase tracking-wider text-black/50"
+          className="nav-btn group relative block h-7 overflow-hidden rounded bg-white px-6 text-lg font-semibold uppercase tracking-wider text-black"
         >
           <span className="block h-7 leading-7 transition-transform duration-300 ease-out group-hover:-translate-y-full">
             Book
