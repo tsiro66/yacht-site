@@ -32,7 +32,7 @@ export default function FleetSection() {
     if (!sectionRef.current) return;
     const sectionTop = sectionRef.current.offsetTop;
     const scrollable = sectionRef.current.offsetHeight - window.innerHeight;
-    const progress = i / yachts.length + 0.001;
+    const progress = i / (yachts.length - 1);
     window.scrollTo({
       top: sectionTop + scrollable * progress,
       behavior: "smooth",
