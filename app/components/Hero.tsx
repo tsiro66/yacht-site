@@ -27,19 +27,19 @@ export default function Hero() {
     // --- Entrance animations (after preloader) ---
     const entranceTl = gsap.timeline({ paused: true });
 
-    gsap.set(titleRef.current, { opacity: 0, y: 40 });
-    gsap.set(descRef.current, { opacity: 0, y: 30 });
+    gsap.set(titleRef.current, { opacity: 0, scale: 0.9 });
+    gsap.set(descRef.current, { opacity: 0 });
 
     entranceTl
       .to(titleRef.current, {
         opacity: 1,
-        y: 0,
-        duration: 0.9,
+        scale: 1,
+        duration: 0.6,
         ease: "power3.out",
       })
       .to(
         descRef.current,
-        { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" },
+        { opacity: 1,  duration: 0.7, ease: "power3.out" },
         "-=0.4"
       );
 

@@ -38,7 +38,7 @@ export default function Preloader() {
     const fontReady = document.fonts.load("1em --font-hero").catch(() => {});
 
     // 3. Safety timeout
-    const timeout = new Promise((resolve) => setTimeout(resolve, 3000));
+    const timeout = new Promise((resolve) => setTimeout(resolve, 1500));
 
     Promise.race([Promise.all([fontReady, videoReady]), timeout]).then(() => {
       // Check if the component is still mounted
@@ -81,8 +81,8 @@ export default function Preloader() {
 
         tl.to(
           char,
-          { opacity: 1, y: 0, duration: 0.6, ease: "back.out(1.2)" },
-          i * 0.05,
+          { opacity: 1, y: 0, duration: 0.4, ease: "back.out(1.2)" },
+          i * 0.03,
         );
       });
 
@@ -93,7 +93,7 @@ export default function Preloader() {
         ellipse,
         {
           scale: 1,
-          duration: 0.4,
+          duration: 0.3,
           ease: "back.out(1.5)",
         },
         holdEnd,
