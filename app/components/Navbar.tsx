@@ -19,14 +19,12 @@ const THEME = {
   light: {
     logo: "#ffffff",
     link: "rgba(255,255,255,0.8)",
-    btnBg: "#ffffff",
-    btnText: "rgba(0,0,0,0.5)",
+    btnText: "rgba(255,255,255,0.9)",
   },
   dark: {
     logo: "#1c1917",
     link: "rgba(28,25,23,0.6)",
-    btnBg: "#1c1917",
-    btnText: "rgba(255,255,255,0.9)",
+    btnText: "rgba(0,0,0,0.9)",
   },
 } as const;
 
@@ -86,7 +84,6 @@ export default function Navbar() {
       gsap.to(nav.querySelectorAll(".nav-logo"), { color: t.logo, duration: 0.3 });
       gsap.to(nav.querySelectorAll(".nav-link"), { color: t.link, duration: 0.3 });
       gsap.to(nav.querySelectorAll(".nav-btn"), {
-        backgroundColor: t.btnBg,
         color: t.btnText,
         duration: 0.3,
       });
@@ -150,7 +147,7 @@ export default function Navbar() {
         {/* Book button */}
         <Link
           href="/book"
-          className="nav-btn group relative block h-7 overflow-hidden rounded bg-white px-6 text-lg font-semibold uppercase tracking-wider text-black"
+          className="nav-btn group relative block h-7 overflow-hidden px-6 text-lg font-semibold uppercase tracking-wider text-white"
         >
           <span className="block h-7 leading-7 transition-transform duration-300 ease-out group-hover:-translate-y-full">
             Book
