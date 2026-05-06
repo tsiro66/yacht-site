@@ -2,11 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { gsap, ScrollTrigger } from "@/app/lib/gsap";
 import MenuDrawer from "./MenuDrawer";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const THEME = {
   light: {

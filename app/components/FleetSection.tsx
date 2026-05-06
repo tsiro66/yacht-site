@@ -1,10 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
+import { gsap, ScrollTrigger } from "@/app/lib/gsap";
 
 const INACTIVE_COLOR = "#d6d3d1"; // stone-300
 const ACTIVE_COLOR = "#1c1917"; // stone-900
