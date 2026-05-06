@@ -35,7 +35,7 @@ export default function Preloader() {
     });
 
     // 2. Load custom font
-    const fontReady = document.fonts.load("1em --font-hero").catch(() => {});
+    const fontReady = document.fonts.load("1em Google Sans").catch(() => {});
 
     // 3. Safety timeout
     const timeout = new Promise((resolve) => setTimeout(resolve, 1500));
@@ -166,7 +166,7 @@ export default function Preloader() {
           transformStyle: "preserve-3d",
         }}
       >
-        <span className="font-hero text-white text-5xl md:text-7xl lg:text-8xl tracking-wide">
+        <span className="font-sans font-medium text-white text-5xl md:text-7xl lg:text-8xl tracking-wide">
           {brandChars.map((char, i) => (
             <span
               key={i}

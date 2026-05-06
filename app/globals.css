@@ -2,9 +2,39 @@
 @import "lenis/dist/lenis.css";
 
 @theme inline {
-  --font-sans: var(--font-poppins);
-  --font-serif: var(--font-playfair);
-  --font-hero: var(--font-google-sans);
+  --font-sans: var(--font-google-sans);
+}
+
+:root {
+  --color-background-dark: navy; /* Deep blue video background */
+  --color-text-light: lightblue; /* Yacht site main color - foreground */
+  --color-overlay-light: #4a6a82;
+  --color-overlay-medium: #1b3152;
+  --color-overlay-dark: #0a1628;
+}
+
+@theme inline {
+  --color-background: var(--color-background-dark);
+  --color-foreground: var(--color-text-light);
+  --color-overlay-cream: var(--color-overlay-light);
+  --color-overlay-terracotta: var(--color-overlay-medium);
+  --color-overlay-teal: var(--color-overlay-dark);
+
+}
+
+@keyframes rollLine {
+  0% {
+    transform: translateX(0);
+  }
+  45% {
+    transform: translateX(110%);
+  }
+  45.01% {
+    transform: translateX(-110%);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
 
 html {

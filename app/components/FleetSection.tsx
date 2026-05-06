@@ -40,14 +40,14 @@ export default function FleetSection() {
   };
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Set initial state
+    const mm = gsap.matchMedia();
+
+    mm.add("(min-width: 1024px)", () => {
       nameRefs.current.forEach((el, i) => {
         if (!el) return;
         gsap.set(el, { color: i === 0 ? ACTIVE_COLOR : INACTIVE_COLOR });
       });
 
-      // Center first yacht on mount
       if (listRef.current && listWrapRef.current && nameRefs.current[0]) {
         const wrapH = listWrapRef.current.offsetHeight;
         const nameEl = nameRefs.current[0]!;
@@ -61,13 +61,10 @@ export default function FleetSection() {
         start: "top top",
         end: "bottom bottom",
         onUpdate: (self) => {
-          // Use (length - 1) to ensure we reach the final index at 100% scroll
           const rawProgress = self.progress * (yachts.length - 1);
           const floorIdx = Math.floor(rawProgress);
           const frac = rawProgress - floorIdx;
 
-          // 1. LIST POSITIONING & IMAGE CROSSFADE
-          // Use floorIdx and the next index to interpolate position smoothly
           if (listRef.current && listWrapRef.current) {
             const wrapH = listWrapRef.current.offsetHeight;
             const currName = nameRefs.current[floorIdx];
@@ -79,14 +76,11 @@ export default function FleetSection() {
                 wrapH / 2 - currName.offsetTop - currName.offsetHeight / 2;
               const nextY =
                 wrapH / 2 - nextName.offsetTop - nextName.offsetHeight / 2;
-
-              // Smoothly interpolate between positions based on exact scroll
               const targetY = currY + (nextY - currY) * frac;
               gsap.set(listRef.current, { y: targetY });
             }
           }
 
-          // Image crossfade tied exactly to the scroll
           imageRefs.current.forEach((img, i) => {
             if (!img) return;
             let opacity = 0;
@@ -98,8 +92,6 @@ export default function FleetSection() {
             gsap.set(img, { opacity });
           });
 
-          // 2. ACTIVE TEXT HIGHLIGHTING
-          // Use Math.round here so the color highlights as soon as the image is > 50% visible
           const highlightIdx = Math.round(rawProgress);
 
           if (highlightIdx !== activeRef.current) {
@@ -125,63 +117,85 @@ export default function FleetSection() {
           }
         },
       });
-    }, sectionRef);
+    });
 
-    return () => ctx.revert();
+    return () => mm.revert();
   }, []);
 
   return (
-    <section
-      ref={sectionRef}
-      data-navbar-theme="dark"
-      className="relative z-10"
-      style={{ height: `${(yachts.length + 1) * VH_PER_YACHT}vh` }}
-    >
-      <div className="sticky top-0 flex h-screen w-full items-center bg-[#f5f3f0]">
-        <div className="mx-auto flex w-full max-w-[90rem] flex-col items-center gap-10 px-8 lg:flex-row lg:gap-16 lg:px-16">
-          {/* Yacht image — stacked layers for crossfade */}
-          <div className="relative aspect-[4/3] w-full shrink-0 lg:w-[48%]">
-            {yachts.map((yacht, i) => (
+    <>
+      {/* Mobile — static list */}
+      <section
+        data-navbar-theme="dark"
+        className="relative z-10 bg-[#f5f3f0] px-6 py-16 lg:hidden"
+      >
+        <div className="mx-auto flex max-w-xl flex-col gap-8">
+          {yachts.map((yacht) => (
+            <div key={yacht.name} className="flex flex-col gap-3">
               <div
-                key={yacht.name}
-                ref={(el) => {
-                  imageRefs.current[i] = el;
-                }}
-                className="absolute inset-0 bg-cover bg-center"
-                style={{
-                  backgroundImage: `url(${yacht.image})`,
-                  opacity: i === 0 ? 1 : 0,
-                }}
+                className="aspect-[4/3] w-full bg-cover bg-center"
+                style={{ backgroundImage: `url(${yacht.image})` }}
               />
-            ))}
-          </div>
+              <span className="font-sans text-2xl font-semibold text-stone-900 md:text-3xl">
+                {yacht.name}
+                <sup className="font-sans ml-1 text-xs">{yacht.size}</sup>
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
 
-          {/* Yacht names — vertically centered, list slides */}
-          <div
-            ref={listWrapRef}
-            className="relative h-screen overflow-hidden lg:w-[52%]"
-          >
-            <div
-              ref={listRef}
-              className="absolute left-0 flex w-full flex-col gap-1"
-            >
+      {/* Desktop — scroll-driven animation */}
+      <section
+        ref={sectionRef}
+        data-navbar-theme="dark"
+        className="relative z-10 hidden lg:block"
+        style={{ height: `${(yachts.length + 1) * VH_PER_YACHT}vh` }}
+      >
+        <div className="sticky top-0 flex h-screen w-full items-center bg-[#f5f3f0]">
+          <div className="mx-auto flex w-full max-w-[90rem] flex-row items-center gap-16 px-16">
+            <div className="relative aspect-[4/3] w-[48%] shrink-0">
               {yachts.map((yacht, i) => (
-                <span
+                <div
                   key={yacht.name}
                   ref={(el) => {
-                    nameRefs.current[i] = el;
+                    imageRefs.current[i] = el;
                   }}
-                  onClick={() => scrollToYacht(i)}
-                  className="font-serif cursor-pointer text-4xl font-semibold leading-[1.2] md:text-5xl lg:text-6xl xl:text-7xl"
-                >
-                  {yacht.name}
-                  <sup className="font-sans ml-1 text-sm">{yacht.size}</sup>
-                </span>
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{
+                    backgroundImage: `url(${yacht.image})`,
+                    opacity: i === 0 ? 1 : 0,
+                  }}
+                />
               ))}
+            </div>
+
+            <div
+              ref={listWrapRef}
+              className="relative h-screen w-[52%] overflow-hidden"
+            >
+              <div
+                ref={listRef}
+                className="absolute left-0 flex w-full flex-col gap-1"
+              >
+                {yachts.map((yacht, i) => (
+                  <span
+                    key={yacht.name}
+                    ref={(el) => {
+                      nameRefs.current[i] = el;
+                    }}
+                    onClick={() => scrollToYacht(i)}
+                    className="font-sans cursor-pointer text-6xl font-semibold leading-[1.2] xl:text-7xl"
+                  >
+                    {yacht.name}
+                    <sup className="font-sans ml-1 text-sm">{yacht.size}</sup>
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }

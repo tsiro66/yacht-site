@@ -1,26 +1,11 @@
 import type { Metadata } from "next";
-import { Poppins, Playfair_Display } from "next/font/google";
-import localFont from "next/font/local";
+import { Google_Sans } from "next/font/google";
 import "./globals.css";
 
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-poppins",
-  display: "block",
-});
-
-const googleSans = localFont({
-  src: "./fonts/GoogleSans-Medium.ttf",
-  variable: "--font-google-sans",
-  weight: "500",
-  display: "block",
-});
-
-const playfair = Playfair_Display({
+const googleSans = Google_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-  variable: "--font-playfair",
+  variable: "--font-google-sans",
   display: "block",
 });
 
@@ -37,9 +22,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${poppins.variable} ${playfair.variable} ${googleSans.variable} h-full antialiased`}
+      className={`${googleSans.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col font-hero">{children}</body>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      </head>
+      <body className="min-h-full flex flex-col font-sans">{children}</body>
     </html>
   );
 }
