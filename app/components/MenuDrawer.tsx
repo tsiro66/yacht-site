@@ -167,7 +167,7 @@ export default function MenuDrawer({ theme = "light" }: MenuDrawerProps) {
         createPortal(
           <div
             ref={overlayRef}
-            className="fixed inset-0 z-40"
+            className="fixed inset-0 z-[80]"
             style={{ visibility: "hidden" }}
           >
             <div

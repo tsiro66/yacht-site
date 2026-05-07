@@ -106,7 +106,7 @@ export default function Hero() {
         </video>
 
         {/* Dark overlay */}
-        <div className="absolute inset-0 bg-black/40" />
+        <div className="absolute inset-0 bg-black/10" />
 
         {/* Centered titles */}
         <div className="relative z-10 flex h-full items-center justify-center px-6">

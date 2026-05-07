@@ -97,7 +97,7 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav ref={navRef} className="fixed top-0 left-0 z-[70] w-full bg-transparent backdrop-blur-md">
+    <nav ref={navRef} className="fixed top-0 left-0 z-[90] w-full bg-transparent backdrop-blur-md">
       <div className="mx-5 sm:mx-10 flex items-center justify-between px-6 py-5">
         
         {/* Pass currentTheme to the Drawer */}
