@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { gsap } from "@/app/lib/gsap";
+import { gsap, ScrollTrigger } from "@/app/lib/gsap";
 
 export default function ContactForm() {
   const panelRef = useRef<HTMLDivElement>(null);
@@ -20,12 +20,20 @@ export default function ContactForm() {
         ease: "none",
         scrollTrigger: {
           trigger: cruises,
-          start: "70% top", 
+          start: "70% top",
           end: "bottom bottom",
           scrub: true,
         },
       });
 
+      // 2. Switch navbar to dark when panel is mostly visible
+      ScrollTrigger.create({
+        trigger: cruises,
+        start: "85% top",
+        end: "bottom bottom",
+        onEnter: () => window.dispatchEvent(new CustomEvent("navbar:theme", { detail: "dark" })),
+        onLeaveBack: () => window.dispatchEvent(new CustomEvent("navbar:theme", { detail: "light" })),
+      });
     });
 
     return () => ctx.revert();

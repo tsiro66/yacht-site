@@ -69,7 +69,6 @@ export default function Preloader() {
         onComplete: () => {
           document.body.style.overflow = "";
           outer.style.display = "none";
-          window.dispatchEvent(new CustomEvent("preloader:done"));
         },
       });
 
@@ -116,6 +115,13 @@ export default function Preloader() {
         textGroup,
         { opacity: 0, duration: 0.3, ease: "power2.in" },
         zoomStart + zoomDuration - 0.3,
+      );
+
+      // Dispatch early so hero title fades in while ellipse still expanding
+      tl.call(
+        () => window.dispatchEvent(new CustomEvent("preloader:done")),
+        [],
+        zoomStart + zoomDuration * 0.45,
       );
     });
 

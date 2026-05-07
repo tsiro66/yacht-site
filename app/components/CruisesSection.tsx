@@ -78,7 +78,7 @@ export default function CruisesSection() {
     <section
       id="cruises"
       ref={sectionRef}
-      className="relative h-[450vh] w-full" // Extra height keeps it sticky longer
+      className="relative h-[800vh] w-full" // Extra height keeps it sticky longer
     >
       <div className="sticky top-0 h-screen w-full overflow-hidden" style={{ backgroundColor: NAVY }}>
         <div className="absolute inset-0 hidden lg:block">

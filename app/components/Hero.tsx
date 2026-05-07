@@ -31,7 +31,7 @@ export default function Hero() {
       .to(titleRef.current, {
         opacity: 1,
         scale: 1,
-        duration: 0.6,
+        duration: 1,
         ease: "power3.out",
       })
       .to(

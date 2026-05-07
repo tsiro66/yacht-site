@@ -81,15 +81,23 @@ export default function Navbar() {
       );
     });
 
+    // Allow other components (fixed elements, etc.) to set navbar theme via custom event
+    const onThemeEvent = (e: Event) => {
+      const theme = (e as CustomEvent<"light" | "dark">).detail;
+      applyTheme(theme);
+    };
+    window.addEventListener("navbar:theme", onThemeEvent);
+
     return () => {
       window.removeEventListener("preloader:done", onPreloaderDone);
+      window.removeEventListener("navbar:theme", onThemeEvent);
       showAnim?.kill();
       themeTriggers.forEach((t) => t.kill());
     };
   }, []);
 
   return (
-    <nav ref={navRef} className="fixed top-0 left-0 z-50 w-full bg-transparent backdrop-blur-md">
+    <nav ref={navRef} className="fixed top-0 left-0 z-[70] w-full bg-transparent backdrop-blur-md">
       <div className="mx-5 sm:mx-10 flex items-center justify-between px-6 py-5">
         
         {/* Pass currentTheme to the Drawer */}

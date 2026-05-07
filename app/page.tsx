@@ -3,6 +3,7 @@ import Hero from "./components/Hero";
 import FleetSection from "./components/FleetSection";
 import CruisesSection from "./components/CruisesSection";
 import ContactForm from "./components/ContactForm";
+import Footer from "./components/Footer";
 import Preloader from "./components/Preloader";
 
 export default function Home() {
@@ -14,6 +15,7 @@ export default function Home() {
       <FleetSection />
       <CruisesSection />
       <ContactForm />
+      <Footer />
     </>
   );
 }
