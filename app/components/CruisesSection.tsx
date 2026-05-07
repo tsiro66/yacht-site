@@ -63,7 +63,7 @@ export default function CruisesSection() {
             scrollTrigger: {
               trigger: sectionRef.current,
               start: "20% top",
-              end: "70% top",
+              end: "50% top",
               scrub: true,
             },
           }
@@ -78,7 +78,7 @@ export default function CruisesSection() {
     <section
       id="cruises"
       ref={sectionRef}
-      className="relative h-[800vh] w-full" // Extra height keeps it sticky longer
+      className="relative h-[600vh] w-full" // Extra height keeps it sticky longer
     >
       <div className="sticky top-0 h-screen w-full overflow-hidden" style={{ backgroundColor: NAVY }}>
         <div className="absolute inset-0 hidden lg:block">

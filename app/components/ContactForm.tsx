@@ -20,7 +20,7 @@ export default function ContactForm() {
         ease: "none",
         scrollTrigger: {
           trigger: cruises,
-          start: "70% top",
+          start: "50% top",
           end: "bottom bottom",
           scrub: true,
         },
